@@ -1,40 +1,228 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+    <title>Client side Routing</title>
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme">
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+    <link rel="stylesheet" href="examples/assets/styles.css">
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h2>Building a client-side router from scratch</h2>
+          <p>Rajasegar Chandran</p>
+          <aside class="notes">
+                  Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+          </aside>
+        </section>
+        <section>
+          <p class="yellow">Agenda</p>
+          <ul>
+            <li>What?</li>
+            <li>Two approaches</li>
+            <li>1. Routing using Fragment Identifiers </li>
+            <li>2. Routing using History API </li>
+            <li>Use a library for routing</li>
+          </ul>
+        </section>
+        <section>
+          <p class="yellow">What is not here?</p>
+          <ul>
+            <li>Templating solutions</li>
+            <li>Query Params</li>
+            <li>Server side redirection</li>
+          </ul>
+        </section>
+        <section>
+          <p>Standard Web Application</p>
+          <img src="examples/assets/std-web-app.png"/>
+        </section>
+        <section>
+          <p>AJAX Web Application</p>
+          <img src="examples/assets/ajax-web-app.png"/>
+        </section>
+        <section>
+          <p>Single-page Web Application</p>
+          <img src="examples/assets/spa-web-app.png"/>
+        </section>
+        <section>
+          <section>
+          <p class="cyan">Architecture</p>
+          <ul>
+            <li>Registry</li>
+            <li>Listeners</li>
+          </ul>
+          </section>
+          <section>
+            <p>Registry</p>
+          </section> 
+          <section>
+            <p>Listeners</p>
+          </section> 
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+        </section>
+        <section>
+          <p class="yellow">Fragment Identifiers</p>
+          <p class="fragment fade-up cyan">the part of the URL beginning with and following the # symbol</p>
+          <p class="fragment">URL = http://google.com#cool-feature</p>
+          <p class="fragment">Fragment Id = #cool-feature</p>
+        </section>
+        <section>
+          <p class="yellow">Window: hashchange event</p>
+          <p>The `hashchange` event is fired when the fragment identifier of the URL has changed.</p>
+        </section>
+        <section>
+          <p>index.html</p>
+          <pre>
+            <code data-line-numbers=4-8>
+            <script type="text/template">
+<body>
+    <header>
+      <nav>
+        <a href="#/">Go To Index</a>
+        <a href="#/list">Go To List</a>
+        <a href="#/dummy">Dummy Page</a>
+      </nav>
+    </header>
+    <main>
+    </main>
+</body>
+            </script>
+            </code>
+          </pre>
+        </section>
+        <section>
+          <p>pages.js</p>
+          <pre>
+          <code>
+export default container => {
+  const home = () => {
+    container
+      .textContent = 'This is Home page'
+  }
+  const list = () => {
+    container
+      .textContent = 'This is List Page'
+  }
+  return {
+    home,
+    list
+  }
+}
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+          </code>
+          </pre>
+        </section>
+        <section>
+          <p>404</p>
+          <pre><code>
+const notFound = () => {
+  container
+    .textContent = 'Page Not Found!'
+}
+          </code></pre>
+
+        </section>
+        <section>
+          <p>index.js</p>
+          <pre><code data-line-numbers=1|2|3|6-10>
+import createRouter from './router.js';
+import createPages from './pages.js';
+const container = document.querySelector('main');
+const pages = createPages(container);
+const router = createRouter();
+router
+  .addRoute('#/', pages.home)
+  .addRoute('#/list', pages.list)
+  .setNotFound(pages.notFound)
+  .start();
+          </code></pre>
+        </section>
+        <section>
+          <p>router.js</p>
+          <pre><code data-line-numbers=3|4|5|6-15|16-22|23-26|27-33|34>
+export default () => {
+  // Registry
+  const routes = []
+  let notFound = () => {}
+  const router = {}
+  const checkRoutes = () => {
+    const currentRoute = routes.find(route => {
+      return route.fragment === window.location.hash
+    })
+    if (!currentRoute) {
+      notFound()
+      return
+    }
+    currentRoute.component()
+  }
+  router.addRoute = (fragment, component) => {
+    routes.push({
+      fragment,
+      component
+    })
+    return router
+  }
+  router.setNotFound = cb => {
+    notFound = cb
+    return router
+  }
+  // Listener
+  router.start = () => {
+    window.addEventListener('hashchange', checkRoutes)
+    if (!window.location.hash) {
+      window.location.hash = '#/'
+    }
+    checkRoutes()
+  }
+  return router
+}
+          </code></pre>
+        </section>
+        <section>
+          <p>index.html</p>
+          <pre><code>
+          </code> </pre> 
+        </section>
+        <section>
+          <p>Navigating Programmatically</p>
+        </section>
+        <section>
+          <p>Route Parameters</p>
+        </section>
+
+        <section>
+          <p>History API</p>
+        </section>
+        <section>
+          <p>Navigo</p>
+        </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+      });
+    </script>
+  </body>
 </html>
