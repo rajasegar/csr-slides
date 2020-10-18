@@ -28,9 +28,8 @@
           <p class="yellow">Agenda</p>
           <ul>
             <li>What?</li>
-            <li>Two approaches</li>
-            <li>1. Routing using Fragment Identifiers </li>
-            <li>2. Routing using History API </li>
+            <li>Using Fragment Identifiers </li>
+            <li>Using History API </li>
             <li>Use a library for routing</li>
           </ul>
         </section>
@@ -63,16 +62,21 @@
           </ul>
           </section>
           <section>
-            <p>Registry</p>
+            <p class="yellow">Registry</p>
+            <p>Collection of our application’s routes.</p>
+            <pre class="fragment"><code>
+            const routes = [];
+            </code> </pre> 
           </section> 
           <section>
-            <p>Listeners</p>
+            <p class="cyan">Listeners</p>
+            <p>listener for the current url</p>
           </section> 
 
         </section>
         <section>
           <p class="yellow">Fragment Identifiers</p>
-          <p class="fragment fade-up cyan">the part of the URL beginning with and following the # symbol</p>
+          <p class="fragment fade-up cyan">Part of the URL beginning with and following the # symbol</p>
           <p class="fragment">URL = http://google.com#cool-feature</p>
           <p class="fragment">Fragment Id = #cool-feature</p>
         </section>
@@ -133,6 +137,50 @@ const notFound = () => {
 
         </section>
         <section>
+          <p>router.js</p>
+          <pre><code data-line-numbers=2-3|4|5|6-15|17-23|25-28|30-37|39> export default () => {
+  // Registry
+  const routes = [];
+  let notFound = () => {};
+  const router = {};
+  const checkRoutes = () => {
+    const currentRoute = routes.find(route => {
+      return route.fragment === window.location.hash;
+    })
+    if (!currentRoute) {
+      notFound();
+      return;
+    }
+    currentRoute.component();
+  }
+
+  router.addRoute = (fragment, component) => {
+    routes.push({
+      fragment,
+      component
+    });
+    return router;
+  }
+
+  router.setNotFound = cb => {
+    notFound = cb;
+    return router;
+  }
+
+  // Listener
+  router.start = () => {
+    window.addEventListener('hashchange', checkRoutes)
+    if (!window.location.hash) {
+      window.location.hash = '#/'
+    }
+    checkRoutes()
+  }
+
+  return router
+}
+          </code></pre>
+        </section>
+        <section>
           <p>index.js</p>
           <pre><code data-line-numbers=1|2|3|6-10>
 import createRouter from './router.js';
@@ -148,64 +196,256 @@ router
           </code></pre>
         </section>
         <section>
-          <p>router.js</p>
-          <pre><code data-line-numbers=3|4|5|6-15|16-22|23-26|27-33|34>
-export default () => {
-  // Registry
-  const routes = []
-  let notFound = () => {}
-  const router = {}
-  const checkRoutes = () => {
-    const currentRoute = routes.find(route => {
-      return route.fragment === window.location.hash
-    })
-    if (!currentRoute) {
-      notFound()
-      return
-    }
-    currentRoute.component()
-  }
-  router.addRoute = (fragment, component) => {
-    routes.push({
-      fragment,
-      component
-    })
-    return router
-  }
-  router.setNotFound = cb => {
-    notFound = cb
-    return router
-  }
-  // Listener
-  router.start = () => {
-    window.addEventListener('hashchange', checkRoutes)
-    if (!window.location.hash) {
-      window.location.hash = '#/'
-    }
-    checkRoutes()
-  }
-  return router
-}
-          </code></pre>
-        </section>
-        <section>
           <p>index.html</p>
-          <pre><code>
+          <pre><code data-line-numbers="11">
+          <script type="text/template"><body>
+    <header>
+      <nav>
+        <a href="#/">Go To Index</a>
+        <a href="#/list">Go To List</a>
+        <a href="#/dummy">Dummy Page</a>
+      </nav>
+    </header>
+    <main>
+    </main>
+  <script type="module" src="index.js"></script>
+</body>
+            </script> 
           </code> </pre> 
         </section>
         <section>
           <p>Navigating Programmatically</p>
         </section>
         <section>
+          <p>index.html</p>
+          <pre><code>
+          <script type="text/template">
+<header>
+  <a data-navigation href="/">Go To Index</a>
+  <a data-navigation href="/list">Go To List</a>
+  <a data-navigation href="/dummy">Dummy Page</a>
+</header>
+          </script>
+          </code> </pre> 
+        </section>
+        <section>
+          <p>Listening anchor events</p>
+          <pre><code data-line-numbers="1|9-12">const NAV_A_SELECTOR = 'a[data-navigation]';
+router.start = () => {
+  checkRoutes();
+  window.setInterval(checkRoutes, TICKTIME);
+  document
+    .body
+    .addEventListener('click', e => {
+      const { target } = e;
+      if (target.matches(NAV_A_SELECTOR)) {
+        e.preventDefault();
+        router.navigate(target.href);
+      }
+    })
+  return router;
+}
+</code> </pre> 
+        </section>
+        <section>
           <p>Route Parameters</p>
         </section>
+        <section>
+          <p>pages.js</p>
+          <pre><code data-line-numbers="1-4|5-9">const detail = (params) => {
+  const { id } = params
+  container.textContent = `This is Detail Page with Id ${id}`;
+}
+const anotherDetail = (params) => {
+  const { id, anotherId } = params
+  container.textContent = `This is another Detail Page 
+    with Id ${id}  and AnotherId ${anotherId}`;
+}
+</code> </pre> 
+          </section> 
+          <section>
+            <p>Defining Routes with parameters</p>
+            <pre><code data-line-numbers="4-5">router
+  .addRoute('#/', pages.home)
+  .addRoute('#/list', pages.list)
+  .addRoute('#/list/:id', pages.detail)
+  .addRoute('#/list/:id/:anotherId', pages.anotherDetail)
+  .setNotFound(pages.notFound)
+  .start()
+            </code> </pre> 
+          </section>
+          <section>
+            <p>Extracting Parameters Name from Fragments</p>
+<pre><code data-line-numbers>const ROUTE_PARAMETER_REGEXP = /:(\w+)/g
+const URL_FRAGMENT_REGEXP = '([^\\/]+)'
+router.addRoute = (fragment, component) => {
+  const params = []
+  const parsedFragment = fragment
+    .replace(
+      ROUTE_PARAMETER_REGEXP,
+      (match, paramName) => {
+        params.push(paramName)
+        return URL_FRAGMENT_REGEXP
+      })
+    .replace(/\//g, '\\/')
+  routes.push({
+    testRegExp: new RegExp(`^${parsedFragment}$`),
+    component,
+    params
+  })
+  return router
+}
+</code> </pre> 
+          </section>
+          <section>
+            <p>Extracting the URL params from the current fragment</p>
+            <pre>
+            <code data-line-numbers>const extractUrlParams = (route, windowHash) => {
+  if (route.params.length === 0) {
+    return {};
+  }
+  const params = {};
+  const matches = windowHash.match(route.testRegExp);
+  matches.shift();
+  matches.forEach((paramValue, index) => {
+    const paramName = route.params[index]
+    params[paramName] = paramValue
+  });
+  return params;
+}
+</code> </pre> 
+</section> 
+<section>
+  <p>checkRoutes</p>
+  <pre><code data-line-numbers>
+const checkRoutes = () => {
+  const { hash } = window.location;
+  const currentRoute = routes.find(route => {
+    const { testRegExp } = route;
+    return testRegExp.test(hash);
+  })
+  if (!currentRoute) {
+    notFound();
+    return;
+  }
+  const urlParams = extractUrlParams(
+    currentRoute,
+    window.location.hash
+  );
+  currentRoute.component(urlParams);
+}
+            </code> 
+            </pre> 
+            </section> 
 
         <section>
-          <p>History API</p>
+          <p class="yellow">History API</p>
+          <p>Manipulate the users browsing history</p>
+
         </section>
         <section>
-          <p>Navigo</p>
+          <p class="yellow">History API</p>
+          <table>
+            <tr>
+              <td>
+                back()
+              </td>
+              <td>
+                Goes to the previous page in the history.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                forward()
+              </td>
+              <td>
+                Goes to the next page in the history.
+              </td>
+            </tr>
+            <tr><td>
+                go(index)</td>
+              <td>
+                Goes to a specific page in the history.
+              </td>
+            </tr>
+            <tr><td>
+                pushState(state, title, URL)</td>
+              <td>
+                Pushes the data in the history stack and navigate to the provided URL.
+              </td>
+            </tr>
+            <tr><td>
+                replaceState(state, title, URL)
+              </td><td>
+                Replaces the most recent data in the history stack and navigates to the provided URL.
+              </td>
+            </tr>
+          </table> 
+          </section> 
+          <section>
+            <p>checkRoutes</p>
+            <pre><code>const { pathname } = window.location;
+    if (lastPathname === pathname) {
+      return;
+    }
+            </code> </pre> 
+            </section> 
+            <section>
+              <p>router.navigate</p>
+              <pre><code data-line-numbers="2-4">router.navigate = path => {
+    window
+      .history
+      .pushState(null, null, path)
+  }
+              </code> </pre> 
+            </section>
+        <section>
+          <p class="yellow">Navigo</p>
+          <p>Created by Krasimir Tsonev</p>
+          <a href="https://github.com/krasimir/navigo">Github</a>
+
         </section>
+        <section>
+          <p>Using Navigo in our router.js</p>
+          <pre><code data-line-numbers=2|5|9|13|16>export default () => {
+  const navigoRouter = new window.Navigo()
+  const router = {}
+  router.addRoute = (path, callback) => {
+    navigoRouter.on(path, callback)
+    return router
+  }
+router.setNotFound = cb => {
+    navigoRouter.notFound(cb)
+    return router
+  }
+  router.navigate = path => {
+    navigoRouter.navigate(path)
+  }
+  router.start = () => {
+    navigoRouter.resolve()
+    return router
+  }
+  return router
+}
+          </pre></code>
+          </section> 
+          <section>
+            <p>index.html</p>
+            <pre><code>
+            <script type="text/template">
+<header>
+  <a data-navigo href="/">Go To Index</a>
+  <a data-navigo href="/list">Go To List</a>
+  <a data-navigo href="/list/1">Go To Detail With Id 1</a>
+  <a data-navigo href="/list/2">Go To Detail With Id 2</a>
+  <a data-navigo href="/list/1/2">Go To Another Detail</a>
+  <a data-navigo href="/dummy">Dummy Page</a>
+</header>
+
+            </script>
+            </code> </pre> 
+          </section>
+
       </div>
     </div>
 
