@@ -28,8 +28,8 @@
           <p class="yellow">Agenda</p>
           <ul>
             <li>What?</li>
-            <li>Using Fragment Identifiers </li>
-            <li>Using History API </li>
+            <li>Hash-based routing </li>
+            <li>URL-based routing </li>
             <li>Use a library for routing</li>
           </ul>
         </section>
@@ -40,6 +40,10 @@
             <li>Query Params</li>
             <li>Server side redirection</li>
           </ul>
+        </section>
+        <section>
+          <h4>Disclaimer</h4>
+          <p class="yellow">Don't use this in production!</p>
         </section>
         <section>
           <p>Standard Web Application</p>
@@ -78,6 +82,11 @@
             <p>listener for the current url</p>
           </section> 
 
+        </section>
+        <section>
+          <p class="yellow">Hash-based routing</p>
+          <p>https://freshdesk.com<span class="yellow">#about</span> </p>
+          <p>https://freshdesk.com<span class="yellow">#contact</span> </p>
         </section>
         <section>
           <p class="yellow">Fragment Identifiers</p>
@@ -142,7 +151,7 @@ const notFound = () => {
 
         </section>
         <section>
-          <p class="yellow">Requisites for a Router</p>
+          <p class="yellow">Basic Functions of a Router</p>
           <ul>
             <li class="fragment">Define and add routes to the registry</li>
             <li class="fragment">Map the current URL to the corresponding route and it's component</li>
@@ -196,8 +205,7 @@ const notFound = () => {
         </section>
         <section>
           <p>index.js</p>
-          <pre><code data-line-numbers=1|2|3|6-10>
-import createRouter from './router.js';
+          <pre><code data-line-numbers="1|2|3|6-10">import createRouter from './router.js';
 import createPages from './routes.js';
 const container = document.querySelector('main');
 const pages = createPages(container);
@@ -228,7 +236,11 @@ router
           </code> </pre> 
         </section>
         <section>
-          <p>Navigating Programmatically</p>
+          <p class="yellow">Programmatic Navigation</p>
+          <ul>
+            <li>Redirection (Login/Signup)</li>
+            <li>Access Restriction</li>
+          </ul>
         </section>
         <section>
           <p>index.html</p>
@@ -260,6 +272,14 @@ router.start = () => {
   return router;
 }
 </code> </pre> 
+        </section>
+        <section>
+          <p>router.navigate</p>
+          <pre><code>
+  router.navigate = fragment => {
+    window.location.hash = fragment
+  }
+          </code></pre>
         </section>
         <section>
           <p class="yellow">Route Parameters</p>
@@ -358,7 +378,19 @@ const checkRoutes = () => {
             </pre> 
             <a target="_blank" href="http://localhost:3000">Demo</a>
             </section> 
-
+            <section>
+              <p class="yellow">Downsides of Hash-based routing</p>
+              <ul>
+                <li class="fragment">Older Browsers</li>
+                <li class="fragment">Doesn't play well with Server side</li>
+                <li class="fragment">Small client-side only apps with no Backend</li>
+                <li class="fragment">Search Engine Indexing & SEO</li>
+                <li class="fragment">Server Side Rendering</li>
+              </ul>
+              </section> 
+            <section>
+              <p>URL based routing</p>
+            </section>
         <section>
           <p class="yellow">History API</p>
           <p>Manipulate the users browsing history</p>
@@ -366,7 +398,7 @@ const checkRoutes = () => {
         </section>
         <section>
           <p class="yellow">History API</p>
-          <table>
+          <table class="small-font">
             <tr>
               <td>
                 back()
@@ -428,6 +460,14 @@ const checkRoutes = () => {
 
         </section>
         <section>
+          <p>Adding Navigo to our app</p>
+          <pre>
+            <code data-trim><script type="text/template">
+    <script src="//unpkg.com/navigo@6"></script>
+            </script></code>
+          </pre>
+        </section>
+        <section>
           <p>Using Navigo in our router.js</p>
           <pre><code data-line-numbers=2|5|9|13|16>export default () => {
   const navigoRouter = new window.Navigo()
@@ -469,10 +509,7 @@ router.setNotFound = cb => {
             <a target="_blank" href="http://localhost:3002">Demo</a>
           </section>
           <section>
-            <ul>
-              <li>Hash based routing ( window.hashchange)</li>
-              <li>URL based routing ( History API)</li>
-            </ul>
+            <h2>Javascript Frameworks</h2>
           </section>
           <section>
             <p class="yellow">Ember.js</p>
@@ -498,6 +535,7 @@ ENV.locationType = "auto";
 
           <section>
             <p class="cyan">React</p>
+            <a href="https://reactrouter.com/">react-router</a>
             <div class="fragment">
             <p>Hash based routing:</p>
             <pre><code>
@@ -514,6 +552,24 @@ ENV.locationType = "auto";
             </code></pre></div>
           </section>
           <section>
+            <p class="green">Vue.js</p>
+            <a href="https://router.vuejs.org/">vue-router</a>
+            <div class="fragment">
+            <p>Hash based routing (default):</p>
+            <pre><code>
+const router = new VueRouter({
+  mode: 'hash',
+});
+            </code></pre></div>
+            <div class="fragment">
+            <p>HTML5 History Mode </p>
+            <pre><code>
+const router = new VueRouter({
+  mode: 'history',
+});
+            </code></pre></div>
+          </section>
+          <section>
             <p>References:</p>
             <ul>
               <li><a href="http://krasimirtsonev.com/blog/article/A-modern-JavaScript-router-in-100-lines-history-api-pushState-hash-url">A modern JavaScript router in 100 lines</a></li>
@@ -521,6 +577,8 @@ ENV.locationType = "auto";
               <li><a href="https://dev.to/vijitail/let-s-code-a-client-side-router-for-your-frameworkless-spa-2bg">Let’s code a client side router for your frameworkless SPA</a></li>
               <li><a href="https://www.amazon.in/Frameworkless-Front-End-Development-Dependencies-Controlling/dp/1484249666/ref=tmm_pap_swatch_0?_encoding=UTF8&qid=1603085924&sr=8-1">Framworkless Frontend Development by Francesco Strazullo</a></li>
               <li><a href="https://github.com/Apress/frameworkless-front-end-development/tree/master/Chapter06">Code Examples</a></li>
+              <li><a href="https://stackoverflow.com/questions/51974369/hashrouter-vs-browserrouter">Hash Router vs Browser Router</a></li>
+              <li><a href="https://reactarmory.com/answers/push-state-vs-hash-based-routing">Push state vs hash-based routing: which to use?</a></li>
             </ul>
           </section>
           <section>
