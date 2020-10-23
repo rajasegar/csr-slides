@@ -27,7 +27,7 @@
         <section>
           <p class="yellow">Agenda</p>
           <ul>
-            <li>What?</li>
+            <li>Introduction</li>
             <li>Hash-based routing </li>
             <li>URL-based routing </li>
             <li>Use a library for routing</li>
@@ -315,15 +315,15 @@ const anotherDetail = (params) => {
             </code> </pre> 
           </section>
           <section>
-            <p>Extracting Parameter names</p>
-            <p class="fragment yellow">#/list/:id/:anotherId</p>
+            <p class="yellow">Extracting Parameter names</p>
+            <p class="fragment">#/list/:id/:anotherId</p>
             <p class="fragment cyan"> /:(\w+)/g </p>
             <p class="fragment"> [id, anotherId] </p>
           </section>
           <section>
-            <p>Matching route with parameters</p>
-            <p class="fragment yellow">#/list/:id/:anotherId</p>
-            <p class="fragment">^#\/list\/([^\\/]+)\/([^\\/]+)$</p>
+            <p class="yellow">Matching route with parameters</p>
+            <p class="fragment">#/list/:id/:anotherId</p>
+            <p class="fragment cyan">^#\/list\/([^\\/]+)\/([^\\/]+)$</p>
           </section>
           <section>
             <p>Extracting Parameters Name from Fragments</p>
@@ -349,9 +349,20 @@ router.addRoute = (fragment, component) => {
 </code> </pre> 
           </section>
           <section>
-            <p>Extracting the URL params from the current fragment</p>
+            <p class="yellow">Route entry in the Registry</p>
+            <p>#/list/:id/:anotherId</p>
+            <pre class="fragment"><code data-trim>
+            {
+              "testRegExp": ^#\/list\/([^\\/]+)\/([^\\/]+)$,
+              "component": pages.anotherDetail,
+              "params": ['id', 'anotherId']
+            }
+            </code></pre>
+          </section>
+          <section>
+            <p>Populate the route params from the current fragment</p>
             <pre>
-            <code data-line-numbers>const extractUrlParams = (route, windowHash) => {
+            <code data-line-numbers="6|8-11">const extractUrlParams = (route, windowHash) => {
   if (route.params.length === 0) {
     return {};
   }
@@ -368,13 +379,12 @@ router.addRoute = (fragment, component) => {
 </section> 
 <section>
   <p>checkRoutes</p>
-  <pre><code data-line-numbers>
-const checkRoutes = () => {
+  <pre><code data-line-numbers="3-6|11-14|15">const checkRoutes = () => {
   const { hash } = window.location;
   const currentRoute = routes.find(route => {
     const { testRegExp } = route;
     return testRegExp.test(hash);
-  })
+  });
   if (!currentRoute) {
     notFound();
     return;
@@ -520,6 +530,36 @@ router.setNotFound = cb => {
             <a target="_blank" href="http://localhost:3002">Demo</a>
           </section>
           <section>
+            <p class="yellow">When to use What?</p>
+            <table>
+              <tr>
+                <td></td>
+                <td>Hash-based</td>
+                <td>URL-based</td>
+              </tr>
+              <tr class="fragment">
+                <td>Older Browsers</td>
+                <td align="center">&#9989;</td>
+                <td align="center">&#10060;</td>
+              </tr>
+              <tr class="fragment">
+                <td>Browser History</td>
+                <td align="center">&#10060;</td>
+                <td align="center">&#9989;</td>
+              </tr>
+              <tr class="fragment">
+                <td>Server-side Rendering</td>
+                <td align="center">&#10060;</td>
+                <td align="center">&#9989;</td>
+              </tr>
+              <tr class="fragment">
+                <td>Backend interactions</td>
+                <td align="center">&#10060;</td>
+                <td align="center">&#9989;</td>
+              </tr>
+            </table>
+          </section>
+          <section>
             <h2>Javascript Frameworks</h2>
           </section>
           <section>
@@ -591,6 +631,10 @@ const router = new VueRouter({
               <li><a href="https://stackoverflow.com/questions/51974369/hashrouter-vs-browserrouter">Hash Router vs Browser Router</a></li>
               <li><a href="https://reactarmory.com/answers/push-state-vs-hash-based-routing">Push state vs hash-based routing: which to use?</a></li>
             </ul>
+          </section>
+          <section>
+            <p class="yellow">Slides</p>
+            <a href="https://rajasegar.github.io/csr-slides/">https://rajasegar.github.io/csr-slides/</a>
           </section>
           <section>
             <p>Thank you!</p>
