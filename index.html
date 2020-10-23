@@ -315,6 +315,17 @@ const anotherDetail = (params) => {
             </code> </pre> 
           </section>
           <section>
+            <p>Extracting Parameter names</p>
+            <p class="fragment yellow">#/list/:id/:anotherId</p>
+            <p class="fragment cyan"> /:(\w+)/g </p>
+            <p class="fragment"> [id, anotherId] </p>
+          </section>
+          <section>
+            <p>Matching route with parameters</p>
+            <p class="fragment yellow">#/list/:id/:anotherId</p>
+            <p class="fragment">^#\/list\/([^\\/]+)\/([^\\/]+)$</p>
+          </section>
+          <section>
             <p>Extracting Parameters Name from Fragments</p>
 <pre><code data-line-numbers>const ROUTE_PARAMETER_REGEXP = /:(\w+)/g
 const URL_FRAGMENT_REGEXP = '([^\\/]+)'
