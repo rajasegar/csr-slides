@@ -40,10 +40,12 @@
             <li>Query Params</li>
             <li>Server side redirection</li>
           </ul>
+          <img src="examples/assets/we-handle.png"/>
         </section>
         <section>
           <h4>Disclaimer</h4>
           <p class="yellow">Don't use this in production!</p>
+          <img src="examples/assets/production.jpg" alt="">
         </section>
         <section>
           <p>Standard Web Application</p>
@@ -283,6 +285,7 @@ router.start = () => {
         </section>
         <section>
           <p class="yellow">Route Parameters</p>
+          <p><img src="examples/assets/fragments-meme.jpg" alt="Fragments" height="200"></p>
           <ul>
             <li class="fragment">Dynamic Segments (Ember.js)</li>
             <li class="fragment">Bound Parameters (Rails)</li>
@@ -318,7 +321,7 @@ const anotherDetail = (params) => {
             <p class="yellow">Extracting Parameter names</p>
             <p class="fragment">#/list/:id/:anotherId</p>
             <p class="fragment cyan"> /:(\w+)/g </p>
-            <p class="fragment"> [id, anotherId] </p>
+            <p class="fragment"> [ 'id', 'anotherId' ] </p>
           </section>
           <section>
             <p class="yellow">Matching route with parameters</p>
@@ -401,6 +404,7 @@ router.addRoute = (fragment, component) => {
             </section> 
             <section>
               <p class="yellow">Downsides of Hash-based routing</p>
+              <img src="examples/assets/one-does.jpg" height="200"/>
               <ul>
                 <li class="fragment">Older Browsers</li>
                 <li class="fragment">Doesn't play well with Server side</li>
@@ -414,8 +418,8 @@ router.addRoute = (fragment, component) => {
             </section>
         <section>
           <p class="yellow">History API</p>
-          <p>Manipulate the users browsing history</p>
-
+          <p>Manipulate the user's browsing history</p>
+          <img src="examples/assets/browser-history.jpg" height="300"/>
         </section>
         <section>
           <p class="yellow">History API</p>
@@ -529,6 +533,7 @@ router.setNotFound = cb => {
             </code> </pre> 
             <a target="_blank" href="http://localhost:3002">Demo</a>
           </section>
+            <section><img src="examples/assets/neo-i-know.jpg" alt=""></section>
           <section>
             <p class="yellow">When to use What?</p>
             <table>
@@ -627,7 +632,6 @@ const router = new VueRouter({
               <li><a href="https://willtaylor.blog/client-side-routing-in-vanilla-js/">Understanding client side routing by implementing a router in Vanilla JS</a></li>
               <li><a href="https://dev.to/vijitail/let-s-code-a-client-side-router-for-your-frameworkless-spa-2bg">Let’s code a client side router for your frameworkless SPA</a></li>
               <li><a href="https://www.amazon.in/Frameworkless-Front-End-Development-Dependencies-Controlling/dp/1484249666/ref=tmm_pap_swatch_0?_encoding=UTF8&qid=1603085924&sr=8-1">Framworkless Frontend Development by Francesco Strazullo</a></li>
-              <li><a href="https://github.com/Apress/frameworkless-front-end-development/tree/master/Chapter06">Code Examples</a></li>
               <li><a href="https://stackoverflow.com/questions/51974369/hashrouter-vs-browserrouter">Hash Router vs Browser Router</a></li>
               <li><a href="https://reactarmory.com/answers/push-state-vs-hash-based-routing">Push state vs hash-based routing: which to use?</a></li>
             </ul>
@@ -635,6 +639,8 @@ const router = new VueRouter({
           <section>
             <p class="yellow">Slides</p>
             <a href="https://rajasegar.github.io/csr-slides/">https://rajasegar.github.io/csr-slides/</a>
+            <p>
+              <a href="https://github.com/Apress/frameworkless-front-end-development/tree/master/Chapter06">Code Examples</a></p>
           </section>
           <section>
             <p>Thank you!</p>
